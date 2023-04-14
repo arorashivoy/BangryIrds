@@ -4,15 +4,25 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>SwiftStudent.xcscheme_^#shared#^_</key>
+		<key>Bangry irds.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
+		</dict>
+		<key>SwiftStudent.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>AppModule</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>Bangry irds</key>
 		<dict>
 			<key>primary</key>
 			<true/>
