@@ -323,12 +323,15 @@ struct RealityKitView: UIViewRepresentable {
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 1, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 1, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.1, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.1, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.5, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.5, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.2, z: 0)
         }
     }
 }
