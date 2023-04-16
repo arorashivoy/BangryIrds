@@ -68,6 +68,10 @@ struct RealityKitView: UIViewRepresentable {
         var gameWon: Bool = false
         var shootsLeft: Int
         var level: Int = 1
+        
+#if DEBUG
+        var gravity: Bool = true
+#endif
 
         // Constants resources for entities
         let blockVerticle: MeshResource
@@ -184,6 +188,9 @@ struct RealityKitView: UIViewRepresentable {
             let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1]
             levels[self.level](planeEntity, anchor)
             
+#if DEBUG
+            if (!self.gravity) {return}
+#endif
             // Adding gravity to all the blocks
             for blockEntity in self.blocksEntity {
                 let size = blockEntity.visualBounds(relativeTo: blockEntity).extents
@@ -320,6 +327,7 @@ struct RealityKitView: UIViewRepresentable {
 
         func level1(planeEntity: ModelEntity, anchor: AnchorEntity) {
             self.shootsLeft = 3
+//            self.gravity = false
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
@@ -329,9 +337,10 @@ struct RealityKitView: UIViewRepresentable {
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.1, y: 0.8, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.5, y: 0.8, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.5, y: 0.8, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 1, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1, z: 0)
-            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.2, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 1.4, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1.4, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 2.2, z: 0)
         }
     }
 }
