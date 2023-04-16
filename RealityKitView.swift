@@ -168,9 +168,6 @@ struct RealityKitView: UIViewRepresentable {
         func createStage(view: ARView, focusEntity: FocusEntity) {
             let anchor = clearStage(view: view)
             
-            let levels: [(FocusEntity, AnchorEntity) -> ()] = [level0, level1]
-            levels[self.level](focusEntity, anchor)
-            
             // Create a plane below the blocks
             let planeMesh = MeshResource.generatePlane(width: 1, depth: 1)
             let material = SimpleMaterial(color: .init(white: 1.0, alpha: 0.1), isMetallic: false)
@@ -182,6 +179,10 @@ struct RealityKitView: UIViewRepresentable {
 
             self.planeEntity = planeEntity
             anchor.addChild(planeEntity)
+            
+            // Creating level
+            let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1]
+            levels[self.level](planeEntity, anchor)
             
             // Adding gravity to all the blocks
             for blockEntity in self.blocksEntity {
@@ -223,13 +224,13 @@ struct RealityKitView: UIViewRepresentable {
         ///   - x: x co-ordinate
         ///   - y: y co-ordinate
         ///   - z: z co-ordinate
-        func addBlock(focusEntity: FocusEntity, anchor: AnchorEntity, verticle: Bool, x: Float, y: Float, z: Float) {
+        func addBlock(planeEntity: ModelEntity, anchor: AnchorEntity, verticle: Bool, x: Float, y: Float, z: Float) {
             let deltaY: Float = verticle ? 0.3 : 0.1
 
             // Creating the block
             let blockEntity = ModelEntity(mesh: verticle ? self.blockVerticle : self.blockHorizontal, materials: [self.materialBlock])
             blockEntity.name = "Rectangular Block - " + (verticle ? "verticle" : "horizontal")
-            blockEntity.setPosition(SIMD3<Float>(x: x, y: y + deltaY, z: z), relativeTo: focusEntity)
+            blockEntity.setPosition(SIMD3<Float>(x: x, y: y + deltaY, z: z), relativeTo: planeEntity)
             anchor.addChild(blockEntity)
             
             self.blocksEntity.append(blockEntity)
@@ -309,25 +310,25 @@ struct RealityKitView: UIViewRepresentable {
         }
 
         // MARK: Levels
-        func level0(focusEntity: FocusEntity, anchor: AnchorEntity) {
+        func level0(planeEntity: ModelEntity, anchor: AnchorEntity) {
             self.shootsLeft = 3
             
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
         }
 
-        func level1(focusEntity: FocusEntity, anchor: AnchorEntity) {
+        func level1(planeEntity: ModelEntity, anchor: AnchorEntity) {
             self.shootsLeft = 3
             
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 1, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 1, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0)
         }
     }
 }
