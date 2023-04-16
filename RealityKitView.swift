@@ -213,6 +213,10 @@ struct RealityKitView: UIViewRepresentable {
             
             return anchor
         }
+        
+        
+        
+        // Checking working copy
 
         /// Create a block relative to the FocusEntity according to the coordinates
         /// - Parameters:
