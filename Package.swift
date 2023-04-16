@@ -8,19 +8,19 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "SwiftStudent",
+    name: "Bangry irds",
     platforms: [
         .iOS("15.2")
     ],
     products: [
         .iOSApplication(
-            name: "SwiftStudent",
+            name: "Bangry irds",
             targets: ["AppModule"],
             bundleIdentifier: "com.arorashivoy.SwiftStudent",
             teamIdentifier: "62W399JN7W",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .clock),
+            appIcon: .placeholder(icon: .pencil),
             accentColor: .presetColor(.mint),
             supportedDeviceFamilies: [
                 .pad,
@@ -46,7 +46,10 @@ let package = Package(
             dependencies: [
                 .product(name: "FocusEntity", package: "focusentity")
             ],
-            path: "."
+            path: ".",
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )

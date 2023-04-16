@@ -215,9 +215,6 @@ struct RealityKitView: UIViewRepresentable {
         }
         
         
-        
-        // Checking working copy
-
         /// Create a block relative to the FocusEntity according to the coordinates
         /// - Parameters:
         ///   - focusEntity: FocusEntity relative to which the x, y, z are given
