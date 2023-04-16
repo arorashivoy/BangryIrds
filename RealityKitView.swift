@@ -67,7 +67,7 @@ struct RealityKitView: UIViewRepresentable {
         var stageCreated: Bool = false
         var gameWon: Bool = false
         var shootsLeft: Int
-        var level: Int = 1
+        var level: Int = 0
         
 #if DEBUG
         var gravity: Bool = true
@@ -120,7 +120,10 @@ struct RealityKitView: UIViewRepresentable {
             }
             
             // Checking if the game is won or lost
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                if (!self.stageCreated) {
+                    return
+                }
                 // checking won
                 self.gameWon = true
                 for blockEntity in self.blocksEntity {
@@ -144,14 +147,6 @@ struct RealityKitView: UIViewRepresentable {
                 if self.shootsLeft == 0 {
                     // Removing the old scene and creating a new one
                     anchor = self.clearStage(view: view)
-                    
-//                    let gameOverEntity = try! ModelEntity.loadModel(named: "GAME_OVER")
-//                    gameOverEntity.name = "Game Over"
-//                    gameOverEntity.scale = [0.01, 0.01, 0.01]
-//                    gameOverEntity.position.z -= 1.5
-//                    gameOverEntity.position.y -= 0.5
-//                    // gameOverEntity.position.x -= 0.5
-//                    gameOverEntity.orientation = simd_quatf(angle: Float.pi / 2.0, axis: [0, 1, 0])
                     
                     // Adding the Game Over text
                     anchor.addChild(self.textGen(text: "Game Over", color: .red))
@@ -185,7 +180,10 @@ struct RealityKitView: UIViewRepresentable {
             anchor.addChild(planeEntity)
             
             // Creating level
-            let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1]
+            let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1, level2, level3, level4]
+            if self.level >= levels.count {
+                return
+            }
             levels[self.level](planeEntity, anchor)
             
 #if DEBUG
@@ -218,6 +216,7 @@ struct RealityKitView: UIViewRepresentable {
             
             // Emptying the list of Blocks
             self.blocksEntity.removeAll()
+            self.stageCreated = false
             
             return anchor
         }
@@ -301,6 +300,12 @@ struct RealityKitView: UIViewRepresentable {
             anchor.addChild(ballEntity)
         }
         
+        
+        /// Generate 3D Model of text
+        /// - Parameters:
+        ///   - text: What to write
+        ///   - color: color of the text
+        /// - Returns: ModelEntity of the 3D model of text
         func textGen(text: String, color: UIColor) -> ModelEntity {
             let textMesh = MeshResource.generateText(
                 text,
@@ -312,6 +317,10 @@ struct RealityKitView: UIViewRepresentable {
             textEntity.position.z -= 1.5
             textEntity.position.y -= 0.5
             textEntity.position.x -= 0.5
+            if let planeEntity = self.planeEntity {
+                textEntity.position = planeEntity.position
+                textEntity.position.x -= 0.5
+            }
             
             return textEntity
         }
@@ -327,7 +336,6 @@ struct RealityKitView: UIViewRepresentable {
 
         func level1(planeEntity: ModelEntity, anchor: AnchorEntity) {
             self.shootsLeft = 3
-//            self.gravity = false
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
@@ -341,6 +349,46 @@ struct RealityKitView: UIViewRepresentable {
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1.4, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1.6, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 2.2, z: 0)
+        }
+        
+        
+        func level2(planeEntity: ModelEntity, anchor: AnchorEntity) {
+            self.shootsLeft = 3
+            
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 1.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.8, z: 0)
+            
+        }
+        
+        func level3(planeEntity: ModelEntity, anchor: AnchorEntity) {
+            self.shootsLeft = 3
+            
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0.6, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.2, z: 0)
+            
+        }
+        
+        func level4(planeEntity: ModelEntity, anchor: AnchorEntity) {
+            self.shootsLeft = 5
+            
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0.2, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0.2, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0)
         }
     }
 }
