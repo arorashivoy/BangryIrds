@@ -54,7 +54,8 @@ struct RealityKitView: UIViewRepresentable {
         Coordinator()
     }
 
-    /// Coordinator Class
+    
+    // MARK: Coordinator Class
     class Coordinator: NSObject, ARSessionDelegate {
         weak var view: ARView?
         var focusEntity: FocusEntity?
@@ -66,7 +67,7 @@ struct RealityKitView: UIViewRepresentable {
         var stageCreated: Bool = false
         var gameWon: Bool = false
         var shootsLeft: Int
-        var level: Int = 0
+        var level: Int = 1
 
         // Constants resources for entities
         let blockVerticle: MeshResource
@@ -94,13 +95,9 @@ struct RealityKitView: UIViewRepresentable {
         }
 
         // MARK: Handle Taps
-
         @objc func handleTap(_ recognizer: UITapGestureRecognizer) {
             guard let view = self.view, let focusEntity = self.focusEntity, var anchor: AnchorEntity = self.anchor else { return }
             view.scene.anchors.append(anchor)
-
-            // Finding the location of tap
-            let tapLocation = recognizer.location(in: view)
 
             // Creating a stage
             if !self.stageCreated {
@@ -108,74 +105,56 @@ struct RealityKitView: UIViewRepresentable {
                 self.stageCreated = true
                 return
             }
-
+            
             // Getting the plane Entity after creating the stage
             guard let planeEntity = self.planeEntity else { return }
-
-            // Checking if any entity is clicked
-            if let entity = view.entity(at: tapLocation) as? ModelEntity {
-                // Shooting a ball
-                if self.shootsLeft > 0 && !self.gameWon {
-                    self.sendBall(anchor: anchor, entity: entity)
+            
+            
+            // Shooting a ball
+            if self.shootsLeft > 0 && !self.gameWon {
+                self.sendBall(anchor: anchor, focusEntity: focusEntity)
+            }
+            
+            // Checking if the game is won or lost
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                // checking won
+                self.gameWon = true
+                for blockEntity in self.blocksEntity {
+                    if blockEntity.position.y - planeEntity.position.y > 0 {
+                        self.gameWon = false
+                    }
                 }
-
-                // Checking if the game is won or lost
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    // Game Over
-                    if self.shootsLeft == 0 {
-                        // TODO: Ask from other that should I remove it or not
-                        // Removing the old scene and creating a new one
-                        view.scene.anchors.removeAll()
-                        self.anchor = AnchorEntity()
-                        anchor = self.anchor!
-                        view.scene.anchors.append(anchor)
-
-                        let gameOverMesh = MeshResource.generateText(
-                            "Game Over",
-                            extrusionDepth: 0.08,
-                            font: .systemFont(ofSize: 0.2, weight: .bold)
-                        )
-                        let shader = SimpleMaterial(color: .red, roughness: 4, isMetallic: true)
-                        let GameOverEntity = ModelEntity(mesh: gameOverMesh, materials: [shader])
-                        GameOverEntity.position.z -= 1.5
-                        GameOverEntity.position.y -= 0.5
-                        GameOverEntity.position.x -= 0.5
-                        anchor.addChild(GameOverEntity)
-                        self.stageCreated = false
-                        return
-                    }
-
-                    // checking won
-                    self.gameWon = true
-                    for blockEntity in self.blocksEntity {
-                        if blockEntity.position.y - planeEntity.position.y > 0 {
-                            self.gameWon = false
-                        }
-                    }
-                    if self.gameWon {
-                        // TODO: Ask from other that should I remove it or not
-                        // Removing the old scene and creating a new one
-                        view.scene.anchors.removeAll()
-                        self.anchor = AnchorEntity()
-                        anchor = self.anchor!
-                        view.scene.anchors.append(anchor)
-
-                        let gameOverMesh = MeshResource.generateText(
-                            "Game Won",
-                            extrusionDepth: 0.08,
-                            font: .systemFont(ofSize: 0.2, weight: .bold)
-                        )
-                        let shader = SimpleMaterial(color: .green, roughness: 4, isMetallic: true)
-                        let GameOverEntity = ModelEntity(mesh: gameOverMesh, materials: [shader])
-                        GameOverEntity.position.z -= 1.5
-                        GameOverEntity.position.y -= 0.5
-                        GameOverEntity.position.x -= 0.5
-                        anchor.addChild(GameOverEntity)
-                        
-                        self.level += 1
-                        self.stageCreated = false
-                        return
-                    }
+                if self.gameWon {
+                    // Removing the old scene and creating a new one
+                    anchor = self.clearStage(view: view)
+                    
+                    anchor.addChild(self.textGen(text: "Game Won", color: .green))
+                    
+                    self.level += 1
+                    self.stageCreated = false
+                    return
+                }
+                
+                
+                // Game Over
+                if self.shootsLeft == 0 {
+                    // Removing the old scene and creating a new one
+                    anchor = self.clearStage(view: view)
+                    
+//                    let gameOverEntity = try! ModelEntity.loadModel(named: "GAME_OVER")
+//                    gameOverEntity.name = "Game Over"
+//                    gameOverEntity.scale = [0.01, 0.01, 0.01]
+//                    gameOverEntity.position.z -= 1.5
+//                    gameOverEntity.position.y -= 0.5
+//                    // gameOverEntity.position.x -= 0.5
+//                    gameOverEntity.orientation = simd_quatf(angle: Float.pi / 2.0, axis: [0, 1, 0])
+                    
+                    // Adding the Game Over text
+                    anchor.addChild(self.textGen(text: "Game Over", color: .red))
+                    
+                    // Setting the stage as not created
+                    self.stageCreated = false
+                    return
                 }
             }
         }
@@ -187,11 +166,7 @@ struct RealityKitView: UIViewRepresentable {
         ///   - focusEntity: FocusEntity object from the FocusEntity package
         ///   - anchor: Anchor on which the stage is to be built
         func createStage(view: ARView, focusEntity: FocusEntity) {
-            // Creating new stage for the plane
-            view.scene.anchors.removeAll()
-            self.anchor = AnchorEntity()
-            guard let anchor = self.anchor else {return}
-            view.scene.anchors.append(anchor)
+            let anchor = clearStage(view: view)
             
             let levels: [(FocusEntity, AnchorEntity) -> ()] = [level0, level1]
             levels[self.level](focusEntity, anchor)
@@ -207,6 +182,36 @@ struct RealityKitView: UIViewRepresentable {
 
             self.planeEntity = planeEntity
             anchor.addChild(planeEntity)
+            
+            // Adding gravity to all the blocks
+            for blockEntity in self.blocksEntity {
+                let size = blockEntity.visualBounds(relativeTo: blockEntity).extents
+                let boxShape = ShapeResource.generateBox(size: size)
+                blockEntity.collision = CollisionComponent(shapes: [boxShape])
+                blockEntity.physicsBody = PhysicsBodyComponent(
+                    massProperties: .init(shape: boxShape, mass: 50),
+                    material: nil,
+                    mode: .dynamic
+                )
+            }
+        }
+        
+        
+        
+        ///  Remove the existing anchor and creating a new one (i.e., clearing all the elements in the view)
+        /// - Parameter view: view which is to be cleared
+        /// - Returns: return the new anchor which is added to the view
+        func clearStage(view: ARView) -> AnchorEntity {
+            // Creating new stage for the plane
+            view.scene.anchors.removeAll()
+            self.anchor = AnchorEntity()
+            let anchor = self.anchor!
+            view.scene.anchors.append(anchor)
+            
+            // Emptying the list of Blocks
+            self.blocksEntity.removeAll()
+            
+            return anchor
         }
 
         /// Create a block relative to the FocusEntity according to the coordinates
@@ -225,17 +230,7 @@ struct RealityKitView: UIViewRepresentable {
             blockEntity.name = "Rectangular Block - " + (verticle ? "verticle" : "horizontal")
             blockEntity.setPosition(SIMD3<Float>(x: x, y: y + deltaY, z: z), relativeTo: focusEntity)
             anchor.addChild(blockEntity)
-
-            // Setting gravity and collision for the block
-            let size = blockEntity.visualBounds(relativeTo: blockEntity).extents
-            let boxShape = ShapeResource.generateBox(size: size)
-            blockEntity.collision = CollisionComponent(shapes: [boxShape])
-            blockEntity.physicsBody = PhysicsBodyComponent(
-                massProperties: .init(shape: boxShape, mass: 50),
-                material: nil,
-                mode: .dynamic
-            )
-
+            
             self.blocksEntity.append(blockEntity)
         }
         
@@ -243,8 +238,7 @@ struct RealityKitView: UIViewRepresentable {
         /// - Parameters:
         ///   - anchor: AnchorEntity of the ARView
         ///   - entity: Entity on which the ball is to be thrown
-        func sendBall(anchor: AnchorEntity, entity: ModelEntity) {
-            self.shootsLeft -= 1
+        func sendBall(anchor: AnchorEntity, focusEntity: FocusEntity) {
             guard let view = self.view else { return }
 
             // Getting camera's position
@@ -255,22 +249,9 @@ struct RealityKitView: UIViewRepresentable {
             let z = translate.z
 
             let transform: SIMD3<Float> = [x, y, z]
-
-            // Getting the collsion ray cast
-            let query: CollisionCastQueryType = .nearest
-            let mask: CollisionGroup = .default
-            let raycasts: [CollisionCastHit] = view.scene.raycast(
-                from: transform,
-                to: entity.position,
-                query: query,
-                mask: mask,
-                relativeTo: nil
-            )
-
-            guard let raycast: CollisionCastHit = raycasts.first else { return }
-
+            
             // Creating the ball Entity
-            self.createBall(anchor: anchor, entity: entity, transform: transform, raycast: raycast)
+            self.createBall(anchor: anchor, focusEntity: focusEntity, transform: transform)
         }
 
         /// Create a ball to hit the targets
@@ -279,23 +260,30 @@ struct RealityKitView: UIViewRepresentable {
         ///   - entity: Entity on which the ball is supposed to hit
         ///   - transform: coordintes of the camera
         ///   - raycast: rays cast from the camera to the entity
-        func createBall(anchor: AnchorEntity, entity: ModelEntity, transform: SIMD3<Float>, raycast: CollisionCastHit) {
+        func createBall(anchor: AnchorEntity, focusEntity: FocusEntity, transform: SIMD3<Float>) {
+            // Reducing the shoots left
+            self.shootsLeft -= 1
+            
             let ballEntity = ModelEntity(mesh: self.ball, materials: [self.materialSphere])
             ballEntity.name = "Ball"
             ballEntity.position = transform
+            
+            // Calculating distance from camera to focus entity
+            let dist: Float = sqrtf(pow(transform.x - focusEntity.position.x, 2) + pow(transform.y - focusEntity.position.y, 2) + pow(transform.z - focusEntity.position.z, 2))
 
             // Setting body and motion of the ball
             let size = ballEntity.visualBounds(relativeTo: ballEntity).extents
             let ballShape = ShapeResource.generateBox(size: size)
-            let vectorDen: Float = pow(transform.x - entity.position.x, 2) + pow(transform.y - entity.position.y, 2) + pow(transform.z - entity.position.z, 2)
+            let vectorDen: Float = pow(transform.x - focusEntity.position.x, 2) + pow(transform.y - focusEntity.position.y, 2) + pow(transform.z - focusEntity.position.z, 2)
             ballEntity.collision = CollisionComponent(shapes: [ballShape])
             let body = PhysicsBodyComponent(
                 massProperties: .init(shape: ballShape, mass: 75),
                 material: nil,
                 mode: .dynamic
             )
+            
             let motion = PhysicsMotionComponent(
-                linearVelocity: [raycast.distance * (entity.position.x - transform.x) * 10 / vectorDen, (raycast.distance * (entity.position.y - transform.y) * 10 / vectorDen) + 2, raycast.distance * (entity.position.z - transform.z) * 10 / vectorDen]
+                linearVelocity: [dist * (focusEntity.position.x - transform.x) * 10 / vectorDen, (dist * (focusEntity.position.y - transform.y) * 10 / vectorDen) + 2, dist * (focusEntity.position.z - transform.z) * 10 / vectorDen]
             )
             ballEntity.components.set(body)
             ballEntity.components.set(motion)
@@ -303,15 +291,29 @@ struct RealityKitView: UIViewRepresentable {
             // Adding the ball to the anchor
             anchor.addChild(ballEntity)
         }
+        
+        func textGen(text: String, color: UIColor) -> ModelEntity {
+            let textMesh = MeshResource.generateText(
+                text,
+                extrusionDepth: 0.08,
+                font: .systemFont(ofSize: 0.2, weight: .bold)
+            )
+            let shader = SimpleMaterial(color: color, roughness: 4, isMetallic: true)
+            let textEntity = ModelEntity(mesh: textMesh, materials: [shader])
+            textEntity.position.z -= 1.5
+            textEntity.position.y -= 0.5
+            textEntity.position.x -= 0.5
+            
+            return textEntity
+        }
 
         // MARK: Levels
-
         func level0(focusEntity: FocusEntity, anchor: AnchorEntity) {
             self.shootsLeft = 3
             
             self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.5, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
         }
 
         func level1(focusEntity: FocusEntity, anchor: AnchorEntity) {
@@ -319,9 +321,12 @@ struct RealityKitView: UIViewRepresentable {
             
             self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.5, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: -0.2, y: 0.7, z: 0)
-            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0.2, y: 0.7, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.8, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0.3, y: 0.8, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: -0.2, y: 1, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: true, x: 0.2, y: 1, z: 0)
+            self.addBlock(focusEntity: focusEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0)
         }
     }
 }
