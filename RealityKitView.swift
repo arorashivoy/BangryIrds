@@ -12,6 +12,8 @@ import SwiftUI
 
 /// View for RealityKit
 struct RealityKitView: UIViewRepresentable {
+    @EnvironmentObject var modelData: ModelData
+    
     func makeUIView(context: Context) -> ARView {
         let view = ARView()
 
@@ -67,7 +69,7 @@ struct RealityKitView: UIViewRepresentable {
         var stageCreated: Bool = false
         var gameWon: Bool = false
         var shootsLeft: Int
-        var level: Int = 0
+//        var level: Int = 0
         
 #if DEBUG
         var gravity: Bool = true
@@ -138,7 +140,7 @@ struct RealityKitView: UIViewRepresentable {
                     
                     anchor.addChild(self.textGen(text: "Game Won", color: .green))
                     
-                    self.level += 1
+                    ModelData.shared.currLevel += 1
                     self.stageCreated = false
                     return
                 }
@@ -181,10 +183,10 @@ struct RealityKitView: UIViewRepresentable {
             
             // Creating level
             let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1, level2, level3, level4, level5]
-            if self.level >= levels.count {
+            if ModelData.shared.currLevel >= levels.count {
                 return
             }
-            levels[self.level](planeEntity, anchor)
+            levels[ModelData.shared.currLevel](planeEntity, anchor)
             
 #if DEBUG
             if !self.gravity { return }
