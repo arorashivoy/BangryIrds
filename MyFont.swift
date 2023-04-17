@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct MyFont {
+struct MyFont {
     public static func registerFonts() {
         registerFont(bundle: Bundle.main , fontName: "angrybirds-regular", fontExtension: ".ttf")
     }
