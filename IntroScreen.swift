@@ -16,12 +16,11 @@ struct IntroScreen: View {
             
             VStack {
                 Text("Bangry Irds")
-                    .font(.largeTitle.bold())
+//                    .font(.largeTitle.bold())
                     .foregroundColor(Color.init(red: 255/255, green: 203/255, blue: 119/255))
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                     .padding()
-            }
-            
+            } 
         }
     }
 }
