@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct IntroScreen: View {
+    init() {
+        MyFont.registerFonts()
+    }
+    
     var body: some View {
         ZStack {
             // Background color
@@ -16,10 +20,13 @@ struct IntroScreen: View {
             
             VStack {
                 Text("Bangry Irds")
-//                    .font(.largeTitle.bold())
+                    .font(.custom("angrybirds-regular", size: 100))
                     .foregroundColor(Color.init(red: 255/255, green: 203/255, blue: 119/255))
+                    .minimumScaleFactor(0.01)
+                    .scaledToFit()
+                    .padding([.leading, .trailing])
+                    .padding([.leading, .trailing])
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding()
             } 
         }
     }

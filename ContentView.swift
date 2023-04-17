@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        // TODO: Add worning that camera should be head on when placing the level
+        // TODO: add a warning that the focus entity should be stable
         ZStack{
             RealityKitView()
                 .edgesIgnoringSafeArea(.all)
