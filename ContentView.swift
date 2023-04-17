@@ -10,9 +10,8 @@ struct ContentView: View {
                 .environmentObject(modelData)
         }
         else {
-            RealityKitView()
+            GameView()
                 .environmentObject(modelData)
-                .edgesIgnoringSafeArea(.all)
         }
     }
 }
