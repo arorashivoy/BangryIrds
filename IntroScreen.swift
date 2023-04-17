@@ -56,8 +56,8 @@ struct IntroScreen: View {
                         .animation(.easeIn(duration: 0.5), value: para2Opacity)
                     
                     Button {
-                        modelData.currLevel = 0
                         if (!tutDone) {
+                            modelData.currLevel = 0
                             tutDone = true
                             modelData.tutorial = true
                         }
