@@ -20,15 +20,8 @@ struct GameOverlay: View {
                         .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 30, relativeTo: .body))
                         .padding()
                         .foregroundColor(Color.init(red: 254/255, green: 249/255, blue: 239/255))
-//                        .background(content: {
-//                            RoundedRectangle(cornerRadius: 15)
-//                                .foregroundColor(.init(red: 254/255, green: 166/255, blue: 170/255))
-//                                .overlay{
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .stroke(Color.init(red: 248/255, green: 197/255, blue: 199/255), lineWidth: 10)
-//                                }
-//                        })
                         .padding(reader.size.width / 30)
+                        .shadow(radius: 15)
                     
                     Spacer()
                     
@@ -36,15 +29,8 @@ struct GameOverlay: View {
                         .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 30, relativeTo: .body))
                         .padding()
                         .foregroundColor(Color.init(red: 254/255, green: 249/255, blue: 239/255))
-//                        .background(content: {
-//                            RoundedRectangle(cornerRadius: 15)
-//                                .foregroundColor(.init(red: 254/255, green: 166/255, blue: 170/255))
-//                                .overlay{
-//                                    RoundedRectangle(cornerRadius: 15)
-//                                        .stroke(Color.init(red: 248/255, green: 197/255, blue: 199/255), lineWidth: 10)
-//                                }
-//                        })
-//                        .padding(reader.size.width / 30)
+                        .padding(reader.size.width / 30)
+                        .shadow(radius: 15)
                     
                     
                 }
