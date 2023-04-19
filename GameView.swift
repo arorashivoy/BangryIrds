@@ -26,7 +26,7 @@ struct GameView: View {
                     GameOverlay()
                         .environmentObject(modelData)
                     
-                    if modelData.tutorial {
+                    if true {
                         Color.black
                             .ignoresSafeArea()
                             .opacity(0.20)
@@ -36,7 +36,7 @@ struct GameView: View {
                                 TutorialScreen()
                                     .environmentObject(modelData)
                                     .opacity(0.80)
-                                    .padding(.top , reader.size.height / 12)
+                                    .padding(.top , reader.size.height / 9)
                                 Spacer()
                             }
                             Spacer()
