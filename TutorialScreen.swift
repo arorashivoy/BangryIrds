@@ -56,7 +56,7 @@ struct TutorialScreen: View {
 
                     
                     
-                    Spacer()
+//                    Spacer()
                     
                     // Next Button
                     HStack {
@@ -74,6 +74,7 @@ struct TutorialScreen: View {
                     }
                     .padding(.trailing)
                     .padding(.trailing)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
                     
                     // Showing steps number
                     HStack {
