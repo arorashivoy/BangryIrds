@@ -10,7 +10,7 @@ import SwiftUI
 struct TutorialScreen: View {
     @EnvironmentObject var modelData: ModelData
     
-    @State private var step = 0
+    @State private var step = 1
     var body: some View {
         GeometryReader { reader in
             ZStack {
@@ -104,7 +104,7 @@ struct TutorialScreen: View {
                     .padding()
                 }
             }
-            .frame(width: reader.size.width/1.2, height: reader.size.height / 7)
+            .frame(width: reader.size.width/1.2, height: reader.size.height / 5)
             .frame(maxWidth: .infinity, alignment: .center)
             .padding()
         }
