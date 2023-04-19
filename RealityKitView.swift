@@ -66,10 +66,8 @@ struct RealityKitView: UIViewRepresentable {
         var blocksEntity: [ModelEntity] = []
 
         // Variables for functioning
-        var stageCreated: Bool = false
+//        var stageCreated: Bool = false
         var gameWon: Bool = false
-        var shootsLeft: Int
-//        var level: Int = 0
         
 #if DEBUG
         var gravity: Bool = true
@@ -89,7 +87,6 @@ struct RealityKitView: UIViewRepresentable {
             self.blockVerticle = MeshResource.generateBox(width: 0.2, height: 0.6, depth: 0.2, cornerRadius: 0.01)
             self.blockHorizontal = MeshResource.generateBox(width: 0.6, height: 0.2, depth: 0.2, cornerRadius: 0.01)
             self.ball = MeshResource.generateSphere(radius: 0.15)
-            self.shootsLeft = 100
         }
 
         func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
@@ -107,9 +104,8 @@ struct RealityKitView: UIViewRepresentable {
             view.scene.anchors.append(anchor)
 
             // Creating a stage
-            if !self.stageCreated {
+            if !ModelData.shared.stageCreated {
                 self.createStage(view: view, focusEntity: focusEntity)
-                self.stageCreated = true
                 return
             }
             
@@ -117,13 +113,13 @@ struct RealityKitView: UIViewRepresentable {
             guard let planeEntity = self.planeEntity else { return }
             
             // Shooting a ball
-            if self.shootsLeft > 0 && !self.gameWon {
+            if ModelData.shared.shootsLeft > 0 && !self.gameWon {
                 self.sendBall(anchor: anchor, focusEntity: focusEntity)
             }
             
             // Checking if the game is won or lost
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                if !self.stageCreated {
+                if !ModelData.shared.stageCreated {
                     return
                 }
                 
@@ -141,20 +137,17 @@ struct RealityKitView: UIViewRepresentable {
                     anchor.addChild(self.textGen(text: "Game Won", color: .green))
                     
                     ModelData.shared.currLevel += 1
-                    self.stageCreated = false
                     return
                 }
                 
                 // Game Over
-                if self.shootsLeft == 0 {
+                if ModelData.shared.shootsLeft == 0 {
                     // Removing the old scene and creating a new one
                     anchor = self.clearStage(view: view)
                     
                     // Adding the Game Over text
                     anchor.addChild(self.textGen(text: "Game Over", color: .red))
                     
-                    // Setting the stage as not created
-                    self.stageCreated = false
                     return
                 }
             }
@@ -168,6 +161,7 @@ struct RealityKitView: UIViewRepresentable {
         ///   - anchor: Anchor on which the stage is to be built
         func createStage(view: ARView, focusEntity: FocusEntity) {
             let anchor = self.clearStage(view: view)
+            ModelData.shared.stageCreated = true
             
             // Create a plane below the blocks
             let planeMesh = MeshResource.generatePlane(width: 1, depth: 1)
@@ -216,7 +210,7 @@ struct RealityKitView: UIViewRepresentable {
             
             // Emptying the list of Blocks
             self.blocksEntity.removeAll()
-            self.stageCreated = false
+            ModelData.shared.stageCreated = false
             
             return anchor
         }
@@ -269,7 +263,7 @@ struct RealityKitView: UIViewRepresentable {
         ///   - raycast: rays cast from the camera to the entity
         func createBall(anchor: AnchorEntity, focusEntity: FocusEntity, transform: SIMD3<Float>) {
             // Reducing the shoots left
-            self.shootsLeft -= 1
+            ModelData.shared.shootsLeft -= 1
             
             let ballEntity = ModelEntity(mesh: self.ball, materials: [self.materialSphere])
             ballEntity.name = "Ball"
@@ -326,7 +320,7 @@ struct RealityKitView: UIViewRepresentable {
         // MARK: Levels
 
         func level0(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 3
+            ModelData.shared.shootsLeft = 3
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
@@ -334,7 +328,7 @@ struct RealityKitView: UIViewRepresentable {
         }
         
         func level1(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 3
+            ModelData.shared.shootsLeft = 3
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 0, z: 0)
@@ -345,7 +339,7 @@ struct RealityKitView: UIViewRepresentable {
         }
 
         func level2(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 3
+            ModelData.shared.shootsLeft = 3
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0)
@@ -362,7 +356,7 @@ struct RealityKitView: UIViewRepresentable {
         }
         
         func level3(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 3
+            ModelData.shared.shootsLeft = 3
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0)
@@ -376,7 +370,7 @@ struct RealityKitView: UIViewRepresentable {
         }
         
         func level4(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 5
+            ModelData.shared.shootsLeft = 5
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0.2, z: 0)
@@ -388,7 +382,7 @@ struct RealityKitView: UIViewRepresentable {
         }
         
         func level5(planeEntity: ModelEntity, anchor: AnchorEntity) {
-            self.shootsLeft = 5
+            ModelData.shared.shootsLeft = 5
             
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 0.2, z: 0)

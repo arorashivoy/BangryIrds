@@ -19,4 +19,6 @@ final class ModelData: ObservableObject {
     @Published var tutorial: Bool = false
     
     @Published var play: Bool = false
+    @Published var shootsLeft: Int = 0
+    @Published var stageCreated: Bool = false
 }
