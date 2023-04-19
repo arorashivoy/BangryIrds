@@ -29,7 +29,7 @@ struct GameView: View {
                     if modelData.tutorial {
                         Color.black
                             .ignoresSafeArea()
-                            .opacity(0.20)
+                            .opacity(0.40)
                         VStack {
                             HStack {
                                 Spacer()

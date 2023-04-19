@@ -10,7 +10,7 @@ import SwiftUI
 struct TutorialScreen: View {
     @EnvironmentObject var modelData: ModelData
     
-    @State private var step = 1
+    @State private var step = 0
     var body: some View {
         GeometryReader { reader in
             ZStack {
@@ -26,7 +26,7 @@ struct TutorialScreen: View {
                             .padding()
                     }
                     else if step == 2 {
-                        Text("The yellow square on the screen represents the focus. It needs to be stable before you tap the screen. ")
+                        Text("The yellow square on the screen represents the focus. It needs to be stable before you tap the screen, else you wont see any output.")
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)

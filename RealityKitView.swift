@@ -76,6 +76,7 @@ struct RealityKitView: UIViewRepresentable {
         // Constants resources for entities
         let blockVerticle: MeshResource
         let blockHorizontal: MeshResource
+        let blockAlongZ: MeshResource
         let materialBlock: SimpleMaterial
         let materialSphere: SimpleMaterial
         let ball: MeshResource
@@ -86,6 +87,7 @@ struct RealityKitView: UIViewRepresentable {
             self.materialSphere = SimpleMaterial(color: .gray, isMetallic: true)
             self.blockVerticle = MeshResource.generateBox(width: 0.2, height: 0.6, depth: 0.2, cornerRadius: 0.01)
             self.blockHorizontal = MeshResource.generateBox(width: 0.6, height: 0.2, depth: 0.2, cornerRadius: 0.01)
+            self.blockAlongZ = MeshResource.generateBox(width: 0.2, height: 0.2, depth: 0.6, cornerRadius: 0.01)
             self.ball = MeshResource.generateSphere(radius: 0.15)
         }
 
@@ -160,24 +162,29 @@ struct RealityKitView: UIViewRepresentable {
         ///   - focusEntity: FocusEntity object from the FocusEntity package
         ///   - anchor: Anchor on which the stage is to be built
         func createStage(view: ARView, focusEntity: FocusEntity) {
-            let anchor = self.clearStage(view: view)
+            var anchor = self.clearStage(view: view)
             ModelData.shared.stageCreated = true
             
             // Create a plane below the blocks
-            let planeMesh = MeshResource.generatePlane(width: 1, depth: 1)
+            let planeMesh = MeshResource.generatePlane(width: 1 + 0.1 * Float(ModelData.shared.currLevel), depth: 1 + 0.1 * Float(ModelData.shared.currLevel))
             let material = SimpleMaterial(color: .init(white: 1.0, alpha: 0.1), isMetallic: false)
             let planeEntity = ModelEntity(mesh: planeMesh, materials: [material])
             planeEntity.position = focusEntity.position
             planeEntity.physicsBody = PhysicsBodyComponent(massProperties: .default, material: nil, mode: .static)
-            planeEntity.collision = CollisionComponent(shapes: [.generateBox(width: 1, height: 0.001, depth: 1)])
+            planeEntity.collision = CollisionComponent(shapes: [.generateBox(width: 1 + 0.1 * Float(ModelData.shared.currLevel), height: 0.001, depth: 1 + 0.1 * Float(ModelData.shared.currLevel))])
             planeEntity.position = focusEntity.position
 
             self.planeEntity = planeEntity
             anchor.addChild(planeEntity)
             
             // Creating level
-            let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1, level2, level3, level4, level5]
+            let levels: [(ModelEntity, AnchorEntity) -> ()] = [level0, level1, level2, level3, level4, level5, level6]
             if ModelData.shared.currLevel >= levels.count {
+                // Removing the old scene and creating a new one
+                anchor = self.clearStage(view: view)
+                
+                // Adding the Game Over text
+                anchor.addChild(self.textGen(text: "Game Finished", color: .black))
                 return
             }
             levels[ModelData.shared.currLevel](planeEntity, anchor)
@@ -223,11 +230,16 @@ struct RealityKitView: UIViewRepresentable {
         ///   - x: x co-ordinate
         ///   - y: y co-ordinate
         ///   - z: z co-ordinate
-        func addBlock(planeEntity: ModelEntity, anchor: AnchorEntity, verticle: Bool, x: Float, y: Float, z: Float) {
+        func addBlock(planeEntity: ModelEntity, anchor: AnchorEntity, verticle: Bool, x: Float, y: Float, z: Float, alongZ: Bool = false) {
             let deltaY: Float = verticle ? 0.3 : 0.1
+            var blockEntity: ModelEntity
 
             // Creating the block
-            let blockEntity = ModelEntity(mesh: verticle ? self.blockVerticle : self.blockHorizontal, materials: [self.materialBlock])
+            blockEntity = ModelEntity(mesh: verticle ? self.blockVerticle : self.blockHorizontal, materials: [self.materialBlock])
+            if alongZ {
+                blockEntity = ModelEntity(mesh: self.blockAlongZ, materials: [self.materialBlock])
+            }
+            
             blockEntity.name = "Rectangular Block - " + (verticle ? "verticle" : "horizontal")
             blockEntity.setPosition(SIMD3<Float>(x: x, y: y + deltaY, z: z), relativeTo: planeEntity)
             anchor.addChild(blockEntity)
@@ -392,6 +404,28 @@ struct RealityKitView: UIViewRepresentable {
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.3, y: 1, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.3, y: 1, z: 0)
             self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.2, z: 0)
+        }
+        
+        func level6(planeEntity: ModelEntity, anchor: AnchorEntity) {
+            ModelData.shared.shootsLeft = 5
+            
+            
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: 0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: 0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: -0.2, y: 0, z: -0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0.2, y: 0, z: -0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: 0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.6, z: -0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: -0.2, y: 0.8, z: 0, alongZ: true)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 0.8, z: 0, alongZ: true)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0.2, y: 0.8, z: 0, alongZ: true)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1, z: 0)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 1.6, z: 0, alongZ: true)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1.8, z: 0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: true, x: 0, y: 1.8, z: -0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 2.4, z: 0.2)
+            self.addBlock(planeEntity: planeEntity, anchor: anchor, verticle: false, x: 0, y: 2.4, z: -0.2)
+            
         }
     }
 }
