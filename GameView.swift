@@ -25,6 +25,19 @@ struct GameView: View {
                     
                     GameOverlay()
                         .environmentObject(modelData)
+                    
+                    if modelData.tutorial {
+                        VStack {
+                            TutorialScreen()
+                                .environmentObject(modelData)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .opacity(0.80)
+                                .padding(.top , reader.size.height / 10)
+                            Spacer()
+                        }
+
+                        
+                    }
                 }
             }
         }
