@@ -83,8 +83,8 @@ struct RealityKitView: UIViewRepresentable {
 
         override init() {
             // Creating the resources for making blocks and ball
-            self.materialBlock = SimpleMaterial()
-            self.materialSphere = SimpleMaterial(color: .gray, isMetallic: true)
+            self.materialBlock = SimpleMaterial(color: .systemYellow, roughness: 5, isMetallic: true)
+            self.materialSphere = SimpleMaterial(color: .systemPink, roughness: 3, isMetallic: true)
             self.blockVerticle = MeshResource.generateBox(width: 0.2, height: 0.6, depth: 0.2, cornerRadius: 0.01)
             self.blockHorizontal = MeshResource.generateBox(width: 0.6, height: 0.2, depth: 0.2, cornerRadius: 0.01)
             self.blockAlongZ = MeshResource.generateBox(width: 0.2, height: 0.2, depth: 0.6, cornerRadius: 0.01)
