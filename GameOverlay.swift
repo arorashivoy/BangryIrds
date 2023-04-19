@@ -55,7 +55,7 @@ struct GameOverlay: View {
                     .foregroundColor(.white)
                     .padding()
                     .opacity(tapOpacity)
-//                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: tapOpacity)
+                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: tapOpacity)
             }
             .onAppear(perform: {
                 tapOpacity = 1
