@@ -42,7 +42,7 @@ struct IntroScreen: View {
                         .animation(.linear(duration: 1), value: scale)
                     
                     Text("Get ready to experience a whole new level of fun and excitement as you embark on a journey to knock down blocks in a virtual world")
-                        .font(.custom("angrybirds-regular", size: reader.size.width / 18, relativeTo: .body))
+                        .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 18, relativeTo: .body))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
                         .padding([.leading, .trailing])
@@ -50,7 +50,7 @@ struct IntroScreen: View {
                         .animation(.easeIn(duration: 0.5), value: para1Opacity)
                     
                     Text("This game challenges you to aim and hit the blocks in such a way that they all come crashing down. But with the added dimension of Augmented Reality, you'll feel like you're actually standing in the game world and launching your attacks in real-time")
-                        .font(.custom("angrybirds-regular", size: reader.size.width / 18, relativeTo: .body))
+                        .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 18, relativeTo: .body))
                         .multilineTextAlignment(.center)
                         .foregroundColor(.black)
                         .padding()
@@ -70,7 +70,7 @@ struct IntroScreen: View {
                         modelData.play = true
                     }label: {
                         Text(tutDone ? "Play" : "Start Tutorial")
-                            .font(.custom("angrybirds-regular", size: reader.size.width / 15, relativeTo: .body))
+                            .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 15, relativeTo: .body))
                             .padding()
                             .foregroundColor(Color.init(red: 254/255, green: 249/255, blue: 239/255))
                             .background(content: {
