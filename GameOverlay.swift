@@ -16,7 +16,7 @@ struct GameOverlay: View {
         GeometryReader { reader in
             VStack {
                 HStack {
-                    Text("Level: 0")
+                    Text("Level: \(modelData.currLevel)")
                         .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 30, relativeTo: .body))
                         .padding()
                         .foregroundColor(Color.init(red: 254/255, green: 249/255, blue: 239/255))
@@ -31,8 +31,8 @@ struct GameOverlay: View {
                         .padding(reader.size.width / 30)
                     
                     Spacer()
-
-                    Text("Shoots: 0")
+                    
+                    Text("Shoots: \(modelData.shootsLeft)")
                         .font(.custom("angrybirds-regular", size: min(reader.size.width, reader.size.height) / 30, relativeTo: .body))
                         .padding()
                         .foregroundColor(Color.init(red: 254/255, green: 249/255, blue: 239/255))
@@ -56,10 +56,11 @@ struct GameOverlay: View {
                     .padding()
                     .opacity(tapOpacity)
                     .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: tapOpacity)
-                    .onAppear(perform: {
-                        tapOpacity = 1
-                    })
             }
+            .onAppear(perform: {
+                tapOpacity = 1
+            })
+            
         }
     }
 }
