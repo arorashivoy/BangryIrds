@@ -26,7 +26,7 @@ struct GameView: View {
                     GameOverlay()
                         .environmentObject(modelData)
                     
-                    if true {
+                    if modelData.tutorial {
                         Color.black
                             .ignoresSafeArea()
                             .opacity(0.20)
