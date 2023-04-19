@@ -18,15 +18,14 @@ struct GameView: View {
                 Color.init(red: 255/255, green: 237/255, blue: 207/255)
                     .ignoresSafeArea()
                 
-                RealityKitView()
-                    .environmentObject(modelData)
-                    .padding()
-                
-                GameOverlay()
-                    .environmentObject(modelData)
-                
-                
-                
+                ZStack {
+                    RealityKitView()
+                        .environmentObject(modelData)
+                        .padding()
+                    
+                    GameOverlay()
+                        .environmentObject(modelData)
+                }
             }
         }
     }
