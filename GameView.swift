@@ -27,12 +27,18 @@ struct GameView: View {
                         .environmentObject(modelData)
                     
                     if modelData.tutorial {
+                        Color.black
+                            .ignoresSafeArea()
+                            .opacity(0.20)
                         VStack {
-                            TutorialScreen()
-                                .environmentObject(modelData)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .opacity(0.80)
-                                .padding(.top , reader.size.height / 10)
+                            HStack {
+                                Spacer()
+                                TutorialScreen()
+                                    .environmentObject(modelData)
+                                    .opacity(0.80)
+                                    .padding(.top , reader.size.height / 12)
+                                Spacer()
+                            }
                             Spacer()
                         }
 
