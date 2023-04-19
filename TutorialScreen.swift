@@ -20,6 +20,7 @@ struct TutorialScreen: View {
                 VStack{
                     if step == 1 {
                         Text("In this game you have to shoot the blocks so that they fall off the platform. ")
+                            .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)
@@ -27,6 +28,7 @@ struct TutorialScreen: View {
                     }
                     else if step == 2 {
                         Text("The yellow square on the screen represents the focus. It needs to be stable before you tap the screen, else you wont see any output.")
+                            .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)
@@ -34,6 +36,7 @@ struct TutorialScreen: View {
                     }
                     else if step == 3 {
                         Text("Tap the screen to place the blocks, at the yellow square. ")
+                            .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)
@@ -41,6 +44,7 @@ struct TutorialScreen: View {
                     }
                     else if step == 4 {
                         Text("Tap the screen to shoot the ball to hit the blocks off the ground. ")
+                            .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)
@@ -48,6 +52,7 @@ struct TutorialScreen: View {
                     }
                     else if step == 5 {
                         Text("Once all the blocks are fallen off the ground, you will win the game. ")
+                            .fixedSize(horizontal: false, vertical: true)
                             .multilineTextAlignment(.leading)
                             .font(.title)
                             .foregroundColor(.black)
